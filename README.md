@@ -1,5 +1,4 @@
-# 🌏 Hybrid Knowledge AI System for Vietnam Travel
-## Blue Enigma Labs AI Engineer Challenge Submission
+# 🌏 Hybrid Knowledge AI System
 
 
 ## 🎯 Overview
