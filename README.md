@@ -60,11 +60,11 @@ cp config.py config_local.py
 # Edit config_local.py with your API keys
 
 # 3. Load data
-python load_to_neo4j_improved.py
-python pinecone_upload_improved.py
+python load_to_neo4j.py
+python pinecone_upload.py
 
 # 4. Run chat interface
-python hybrid_chat_improved.py
+python hybrid_chat.py
 ```
 
 ### Test Query
@@ -217,67 +217,97 @@ GEMINI_API_KEY = "AIzaSyB_xxxxx"
 ### 1. Load Graph Data
 
 ```bash
-python load_to_neo4j_improved.py
+python load_to_neo4j.py
 ```
 
 **Output:**
 ```
-Creating nodes: 100%|████████| 360/360 [01:08<00:00]
-Creating relationships: 100%|████████| 360/360 [01:10<00:00]
-✅ Done loading into Neo4j.
+Creating nodes: 100%|███████████████████████████████████████████████████████████████████████████| 360/360 [01:04<00:00,  5.58it/s] 
+Creating relationships: 100%|███████████████████████████████████████████████████████████████████| 360/360 [01:04<00:00,  5.55it/s]
+Done loading into Neo4j.
 ```
 
 ### 2. Upload Embeddings
 
 ```bash
-python pinecone_upload_improved.py
+python pinecone_upload.py
 ```
 
 **Output:**
 ```
-📦 Loading FREE embedding model...
-✅ Model loaded! Running locally (no API calls needed)
+======================================================================
+PINECONE UPLOAD - Using FREE Hugging Face Embeddings
+======================================================================
 
-🔄 Generating embeddings and uploading to Pinecone...
-Processing nodes: 100%|████████| 360/360 [02:30<00:00]
+ Loading FREE embedding model...
+   Model: sentence-transformers/all-MiniLM-L6-v2
+   First run will download ~150MB, then cached locally
 
-✅ UPLOAD COMPLETE!
-📊 Statistics:
+ Model loaded! Running locally (no API calls needed)
+
+ Creating Pinecone index: vietnam-travel
+   Dimension: 384
+   Metric: cosine
+   Region: us-east1-gcp (FREE tier)
+
+ Waiting for index to be ready...
+ Index ready!
+
+ Loading data from vietnam_travel_dataset.json...
+ Loaded 360 nodes
+
+ Generating embeddings and uploading to Pinecone...
+   This runs locally - no API calls!
+
+Processing nodes: 100%|█████████████████████████████████████████████████████████████████████████| 360/360 [00:10<00:00, 33.17it/s]
+
+======================================================================
+ UPLOAD COMPLETE!
+======================================================================
+ Statistics:
    Total nodes processed: 360
    Successfully uploaded: 360
-   💰 Total cost: $0.00 (100% FREE!)
+   Vector dimension: 384
+   Total cost: $0.00 (100% FREE!)
+======================================================================
+
+ Verification:
+   Vectors in index: 352
+   Index ready:
+
+ All done! Ready to run hybrid_chat_GEMINI.py
 ```
 
 ### 3. Run Chat Interface
 
 ```bash
-python hybrid_chat_improved.py
+python hybrid_chat.py
 ```
 
 **Sample Session:**
 ```
 ======================================================================
-🌏 HYBRID TRAVEL ASSISTANT - Google Gemini Edition
+ HYBRID TRAVEL ASSISTANT - Google Gemini Edition
 Using: Gemini API + Hugging Face Embeddings + Neo4j + Pinecone
 ======================================================================
 
-📦 Initializing components...
+ Initializing components...
 
    1/4 Loading embedding model...
-2025-10-19 21:09:47,511 - INFO - Use pytorch device_name: cpu
-2025-10-19 21:09:47,511 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
-2025-10-19 21:09:51,952 - INFO -    ✅ Embedding model ready (local)
+2025-10-19 21:57:40,632 - INFO - Use pytorch device_name: cpu
+2025-10-19 21:57:40,632 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-10-19 21:57:44,410 - INFO -     Embedding model ready (local)
    2/4 Configuring Google Gemini...
-2025-10-19 21:09:52,683 - INFO -    ✅ Gemini API configured
+2025-10-19 21:57:44,803 - INFO -     Gemini API configured
    3/4 Connecting to Pinecone...
-2025-10-19 21:09:54,932 - INFO -    ✅ Pinecone connected
+2025-10-19 21:57:47,208 - INFO -     Pinecone connected
    4/4 Connecting to Neo4j...
-2025-10-19 21:09:55,921 - INFO -    ✅ Neo4j connected
+2025-10-19 21:57:48,490 - INFO -     Neo4j connected
 
-✅ All systems ready!
+ All systems ready!
 
 ======================================================================
-💬 CHAT READY - Ask me anything about Vietnam travel!
+ CHAT READY - Ask me anything about Vietnam travel!
 ======================================================================
 Commands:
   • Type your question to get recommendations
@@ -285,293 +315,344 @@ Commands:
   • 'exit' - Quit
 ======================================================================
 
-🌏 You: stats
+ You: stats
 
-📊 Cache Statistics:
+ Cache Statistics:
    Hits: 0
    Misses: 0
    Hit Rate: 0.00%
    Cache Size: 0
 
-🌏 You: Plan a 3-day romantic beach vacation in Vietnam
+ You: Plan a 3-day romantic beach vacation in Vietnam
 
-⏳ Processing (async retrieval + Gemini)...
+ Processing (async retrieval + Gemini)...
 
-2025-10-19 21:10:21,570 - INFO - Query: Plan a 3-day romantic beach vacation in Vietnam
-Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 13.76it/s] 
-2025-10-19 21:10:23,265 - INFO - Pinecone: 10 results
-2025-10-19 21:10:23,396 - INFO - Neo4j: 50 relationships
-2025-10-19 21:10:23,396 - INFO - RRF: 52 combined results
-2025-10-19 21:10:23,396 - INFO - AFC is enabled with max remote calls: 10.
-2025-10-19 21:10:47,086 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
-2025-10-19 21:10:47,086 - INFO - Total time: 25.52s
+2025-10-19 21:58:03,891 - INFO - Query: Plan a 3-day romantic beach vacation in Vietnam
+Batches: 100%|██████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 41.99it/s] 
+2025-10-19 21:58:05,546 - INFO - Pinecone: 10 results
+2025-10-19 21:58:05,857 - INFO - Neo4j: 50 relationships
+2025-10-19 21:58:05,857 - INFO - RRF: 49 combined results
+2025-10-19 21:58:05,857 - INFO - AFC is enabled with max remote calls: 10.
+2025-10-19 21:58:32,366 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2025-10-19 21:58:32,366 - INFO - Total time: 28.48s
 ======================================================================
-🤖 Assistant:
+ Assistant:
 ======================================================================
-For a 3-day romantic beach vacation in Vietnam, I recommend two excellent options, each offering a unique blend of romance and coastal beauty, while keeping the short duration in mind for practical logistics.
+For your 3-day romantic beach vacation in Vietnam, I recommend **Ha Long Bay** (ID: `city_ha_long`) as the top choice. While Da Lat (ID: `city_da_lat`) is explicitly described as "romantic" and has a high relevance score, it is a mountain destination, not a beach one, making it unsuitable for your specific request. Ha Long Bay, on the other hand, perfectly combines stunning natural beauty, beach access, and unique romantic experiences.
+
+Here's a detailed plan and recommendations:
 
 ---
 
-### Option 1: Ha Long Bay - Romantic Cruise Escape
+### **Recommended Destination: Ha Long Bay (ID: `city_ha_long`)**
 
-**Why it's a great choice:** Ha Long Bay (ID: city_ha_long) is renowned for its breathtaking karst landscapes, emerald waters, and unique "beach" experience centered around luxury overnight cruises. It's inherently romantic, offering stunning sunsets, intimate dinners, and a sense of adventure.
+Ha Long Bay is renowned for its emerald waters and thousands of towering limestone islands topped with rainforests. A luxury cruise here offers an incredibly romantic and unique beach-adjacent experience, perfect for a 3-day getaway.
 
-**Logistics & Travel Time:**
-*   **Location:** Northern Vietnam.
-*   **Arrival:** Fly into Hanoi (ID: city_hanoi), then take a 2.5-3 hour shuttle/private transfer to Ha Long Bay.
-*   **Consideration:** The travel to and from Ha Long Bay will take up a significant portion of Day 1 and Day 3, making a 2-day/1-night cruise the most practical option for a 3-day trip.
-
-**Recommended Itinerary (3 Days / 2 Nights):**
-
-*   **Day 1: Arrival & Embark on Luxury Cruise**
-    *   Morning: Arrive at Hanoi airport (ID: city_hanoi), transfer to Ha Long Bay.
-    *   Noon: Board your chosen luxury cruise ship. Enjoy a welcome drink and lunch as you begin sailing through the magnificent limestone karsts.
-    *   Afternoon: Participate in activities like kayaking (ID: activity_65 - boat rides) through hidden lagoons, swimming in secluded coves, or visiting a cave.
-    *   Evening: Enjoy a romantic sunset dinner on deck, followed by squid fishing or simply stargazing with your partner.
-    *   *Accommodation:* Overnight on the cruise ship.
-
-*   **Day 2: Bay Exploration & Romantic Moments**
-    *   Morning: Wake up to the serene beauty of the bay. Enjoy Tai Chi on the sundeck, followed by breakfast.
-    *   Late Morning: Continue exploring with visits to a floating village or another stunning cave.
-    *   Noon: Enjoy an early lunch/brunch on board as the cruise starts its journey back to the harbor.
-    *   Afternoon: Disembark and transfer to a romantic hotel in Ha Long City (e.g., Ha Long Bay Hotel 51, if available and suitable for your preferences) for a relaxing evening. Enjoy a couples' spa treatment or a quiet dinner by the bay.
-    *   *Accommodation:* Hotel in Ha Long City.
-
-*   **Day 3: Leisure & Departure**
-    *   Morning: Enjoy a leisurely breakfast at your hotel. You might have time for a short walk along the beach or visit a local market (ID: activity_68) for souvenirs.
-    *   Late Morning: Transfer back to Hanoi airport (ID: city_hanoi) for your departure.
-
-**Why it's romantic:** The stunning scenery, intimate cruise experience, and unique activities like kayaking together create unforgettable romantic memories.   
+**Why Ha Long Bay for a Romantic Beach Vacation?**
+*   **Romantic Ambiance:** The breathtaking scenery, serene waters, and opportunity for private moments on a cruise create an inherently romantic atmosphere.
+*   **Beach & Nature:** It offers beautiful beaches on various islands, alongside unique nature experiences like cave exploration and kayaking.
+*   **Cruise Experience:** Overnight cruises are a highlight, providing luxury accommodation, gourmet dining, and activities all within the stunning bay. This aligns well with `activity_65` (boat rides), which is central to the Ha Long Bay experience.
+*   **Authentic Experiences:** Combines local culture and food, as mentioned in its description.
 
 ---
 
-### Option 2: Da Nang & Hoi An - Beach Bliss & Ancient Charm
+### **3-Day Romantic Ha Long Bay Itinerary**
 
-**Why it's a great choice:** This option combines the beautiful sandy beaches and modern amenities of Da Nang (ID: city_da_nang) with the enchanting, lantern-lit romance of nearby Hoi An (ID: city_hoi_an). It offers a more traditional beach vacation with a strong romantic cultural element.
+This itinerary focuses on maximizing relaxation and romantic experiences within the 3-day timeframe, minimizing travel stress.     
 
-**Logistics & Travel Time:**
-*   **Location:** Central Vietnam.
-*   **Arrival:** Fly directly into Da Nang International Airport (DAD). Da Nang's beaches are minutes away, and Hoi An is a short 30-45 minute drive.
-*   **Consideration:** Excellent accessibility makes this ideal for a 3-day trip, minimizing travel time between destinations.
+**Day 1: Arrival & Romantic Cruise Embarkation**
+*   **Morning/Afternoon:** Arrive at Hanoi's Noi Bai International Airport (ID: `city_hanoi`). From there, take a pre-arranged luxury shuttle or private car transfer to Ha Long Bay (approximately 2.5-3 hours).
+*   **Late Afternoon:** Board your chosen luxury overnight cruise. Many cruises offer welcome drinks and a briefing as you set sail into the magnificent bay.
+*   **Evening:** Enjoy a gourmet dinner with your partner, often featuring fresh seafood, while watching the sunset over the karsts. Participate in an evening activity like squid fishing or simply relax on the deck under the stars.
 
-**Recommended Itinerary (3 Days / 2 Nights):**
+**Day 2: Bay Exploration & Intimate Moments**
+*   **Morning:** Start your day with Tai Chi on the sundeck or simply enjoy the sunrise views. After breakfast, the cruise will take you to explore some of Ha Long Bay's iconic attractions.
+    *   **Activity Suggestion:** Visit a stunning cave (e.g., Sung Sot Cave) or enjoy kayaking through hidden lagoons and around limestone islets (`activity_65`). This offers a chance for intimate exploration.
+*   **Afternoon:** Enjoy lunch back on board. The cruise will continue to a secluded beach area where you can swim, sunbathe, or simply relax together.
+*   **Evening:** Indulge in another exquisite dinner. Some cruises offer a cooking class (`activity_64`) where you can learn to make traditional Vietnamese dishes together, adding a fun and romantic element to your evening.
 
-*   **Day 1: Beach Relaxation in Da Nang**
-    *   Morning/Noon: Arrive at Da Nang International Airport (ID: city_da_nang). Transfer to your beachfront resort in Da Nang.
-    *   Afternoon: Relax on My Khe Beach, one of Vietnam's most beautiful beaches. Enjoy swimming, sunbathing, or a romantic stroll along the shore.
-    *   Evening: Indulge in a romantic seafood dinner at a beachfront restaurant in Da Nang.
-    *   *Accommodation:* Beachfront resort in Da Nang.
-
-*   **Day 2: Romantic Hoi An Exploration**
-    *   Morning: Enjoy a leisurely breakfast at your resort. You might opt for a couples' spa treatment or more beach time.
-    *   Afternoon: Take a short taxi or shuttle ride to Hoi An Ancient Town (ID: city_hoi_an). Explore the charming streets, visit ancient houses, and browse the tailor shops.
-    *   Late Afternoon: Enjoy a romantic boat ride on the Thu Bon River, especially beautiful as the sun sets and the lanterns begin to glow.
-    *   Evening: Have a romantic dinner at one of Hoi An's exquisite riverside restaurants. Release floating lanterns on the river for good luck.
-    *   *Accommodation:* Return to your resort in Da Nang or consider an overnight stay in a boutique hotel in Hoi An for a truly immersive experience.
-
-*   **Day 3: Leisure & Departure**
-    *   Morning: Enjoy a final leisurely breakfast. Depending on your flight schedule, you could have more beach time, visit the Marble Mountains near Da Nang, or do some last-minute souvenir shopping.
-    *   Noon/Afternoon: Transfer to Da Nang International Airport (ID: city_da_nang) for your departure.
-
-**Why it's romantic:** The combination of relaxing beach days, the enchanting atmosphere of Hoi An's lantern-lit streets, and delicious culinary experiences makes this a perfect romantic getaway.
+**Day 3: Farewell Ha Long & Departure**
+*   **Morning:** Enjoy a final breakfast or brunch on board as the cruise slowly makes its way back to the harbor. You might have one last opportunity for a short activity like visiting a floating village or a final swim.
+*   **Late Morning:** Disembark from your cruise.
+*   **Afternoon:** Transfer back to Hanoi for your onward flight, carrying beautiful memories of your romantic escape.
 
 ---
 
-Both options offer fantastic romantic beach experiences in Vietnam. Choose Ha Long Bay for a unique cruise adventure amidst stunning natural beauty, or Da Nang/Hoi An for a blend of relaxing sandy beaches and charming cultural romance with easier logistics.
+### **Alternative Consideration: Da Nang (ID: `city_da_nang`)**
+
+If you prefer a more active beach vacation with modern amenities and direct beach access from a city, Da Nang is a strong alternative.
+*   **Pros:** Known for its beautiful long sandy beaches (like My Khe Beach), modern infrastructure, and proximity to other attractions like Hoi An (ID: `city_hoi_an`).
+*   **Cons:** While it has beaches, it might offer a less uniquely "romantic" experience compared to the serene and iconic landscape of Ha Long Bay's cruise. For a 3-day trip, flying to Central Vietnam (Da Nang) might take more travel time than flying to Hanoi and transferring to Ha Long Bay, depending on your starting point.
+
+---
+
+### **Important Note on Da Lat (ID: `city_da_lat`)**
+
+While Da Lat is highly relevant for "romantic" experiences and "flowers," it is a mountain city in Southern Vietnam, not a beach destination. Therefore, it does not fit your request for a "romantic beach vacation."
+
+---
+
+Enjoy your romantic getaway in Vietnam!
 
 ======================================================================
-⚡ Time: 25.52s | Cache: 0.00%
+ Time: 28.48s | Cache: 0.00%
 ======================================================================
 
-🌏 You: What about budget options in Hanoi?
+ You: What about budget options in Hanoi?
 
-⏳ Processing (async retrieval + Gemini)...
+ Processing (async retrieval + Gemini)...
 
-2025-10-19 21:14:37,356 - INFO - Query: What about budget options in Hanoi?
-Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 87.16it/s] 
-2025-10-19 21:14:38,788 - INFO - Pinecone: 10 results
-2025-10-19 21:14:39,039 - INFO - Neo4j: 46 relationships
-2025-10-19 21:14:39,040 - INFO - RRF: 38 combined results
-2025-10-19 21:14:39,040 - INFO - AFC is enabled with max remote calls: 10.
-2025-10-19 21:14:51,921 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
-2025-10-19 21:14:51,921 - INFO - Total time: 14.56s
+2025-10-19 21:59:16,977 - INFO - Query: What about budget options in Hanoi?
+Batches: 100%|██████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<?, ?it/s] 
+2025-10-19 21:59:18,275 - INFO - Pinecone: 10 results
+2025-10-19 21:59:18,482 - INFO - Neo4j: 46 relationships
+2025-10-19 21:59:18,482 - INFO - RRF: 38 combined results
+2025-10-19 21:59:18,482 - INFO - AFC is enabled with max remote calls: 10.
+2025-10-19 21:59:27,822 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2025-10-19 21:59:27,822 - INFO - Total time: 10.84s
 ======================================================================
-🤖 Assistant:
+ Assistant:
 ======================================================================
-Hanoi (ID: city_hanoi) is an excellent destination for budget travelers, offering a wide range of affordable accommodation, delicious street food, and many free or low-cost attractions.
+Hanoi offers a fantastic experience for travelers on a budget!
 
-For budget-friendly accommodation, we have identified:
+Based on the information provided, here's a specific recommendation for a budget-friendly stay:
 
-*   **Hanoi Hotel 23** (ID: hotel_23): This hotel is specifically described as ideal for travelers looking for **budget experiences**. It offers a cozy stay with comfort and local charm, making it a great choice for those mindful of their spending.
+*   **Hanoi Hotel 23** (ID: `hotel_23`) is explicitly described as "A cozy stay option in Hanoi offering comfort and local charm. Ideal for travelers looking for budget experiences." This hotel seems to be a perfect match for your request.
 
-While other hotels like Hanoi Hotel 25 (ID: hotel_25), Hanoi Hotel 17 (ID: hotel_17), Hanoi Hotel 16 (ID: hotel_16), Hanoi Hotel 22 (ID: hotel_22), Hanoi Hotel 24 (ID: hotel_24), and Hanoi Hotel 18 (ID: hotel_18) are located in Hanoi, their descriptions lean towards boutique or luxury experiences, which may not align with a budget preference.
-
-**General Budget Tips for Hanoi:**
-
-*   **Accommodation:** Beyond specific hotels, look for hostels, guesthouses, and homestays, especially in the Old Quarter. These often provide excellent value and a chance to meet other travelers.
-*   **Food:** Hanoi is famous for its incredible and inexpensive street food. Eating at local stalls and small restaurants is not only budget-friendly but also an authentic cultural experience.
-*   **Attractions:** Many of Hanoi's key attractions, such as Hoan Kiem Lake, the Old Quarter, and various temples, can be enjoyed for free or a minimal entrance fee. Hanoi (ID: city_hanoi) boasts numerous attractions, including Hanoi Attraction 1 through Hanoi Attraction 15, many of which are accessible on a budget.  
-*   **Transportation:** Walking is the best way to explore the Old Quarter. For longer distances, use ride-hailing apps (like Grab) for motorbikes or cars, or local buses, which are very affordable.
-
-Hanoi is well-connected to other popular Vietnamese cities like Hue (ID: city_hue) and Nha Trang (ID: city_nha_trang), making it easy to plan a budget-friendly itinerary across the country.
+While the data highlights `hotel_23` as a specific budget option, Hanoi (`city_hanoi`) in general is renowned for being a very budget-friendly destination. You'll find that many aspects of your trip, from delicious street food to cultural attractions, can be enjoyed without breaking the bank. Hanoi is known for its rich culture, vibrant food scene, and heritage experiences, all of which contribute to an authentic Vietnamese journey that can be tailored to various budgets.
 
 ======================================================================
-⚡ Time: 14.56s | Cache: 0.00%
+ Time: 10.84s | Cache: 0.00%
 ======================================================================
 
-🌏 You: List all the Cities present.
+ You: Plan a trip to city where there there are mountains and beaches
 
-⏳ Processing (async retrieval + Gemini)...
+ Processing (async retrieval + Gemini)...
 
-2025-10-19 21:15:14,132 - INFO - Query: List all the Cities present.
-Batches: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 152.84it/s] 
-2025-10-19 21:15:14,540 - INFO - Pinecone: 10 results
-2025-10-19 21:15:14,693 - INFO - Neo4j: 46 relationships
-2025-10-19 21:15:14,693 - INFO - RRF: 38 combined results
-2025-10-19 21:15:14,693 - INFO - AFC is enabled with max remote calls: 10.
-2025-10-19 21:15:18,412 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
-2025-10-19 21:15:18,412 - INFO - Total time: 4.28s
+2025-10-19 22:00:20,993 - INFO - Query: Plan a trip to city where there there are mountains and beaches
+Batches: 100%|█████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 121.25it/s] 
+2025-10-19 22:00:22,414 - INFO - Pinecone: 10 results
+2025-10-19 22:00:22,665 - INFO - Neo4j: 46 relationships
+2025-10-19 22:00:22,665 - INFO - RRF: 49 combined results
+2025-10-19 22:00:22,665 - INFO - AFC is enabled with max remote calls: 10.
+2025-10-19 22:00:37,690 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2025-10-19 22:00:37,690 - INFO - Total time: 16.70s
 ======================================================================
-🤖 Assistant:
+ Assistant:
 ======================================================================
-Based on the information provided, here are the cities present:
+Based on your request for a city in Vietnam that offers both mountains and beaches, **Ha Long Bay** is your ideal destination.     
 
-*   **Ho Chi Minh City** (ID: city_ho_chi_minh)
-*   **Sapa**
-*   **Mekong Delta**
+While Da Lat and Sapa are excellent choices for mountain lovers, they do not offer beaches. Ha Long Bay, on the other hand, perfectly combines stunning mountainous landscapes (in the form of its iconic limestone karsts rising from the sea) with beautiful beaches.
 
-======================================================================
-⚡ Time: 4.28s | Cache: 0.00%
-======================================================================
+Here's why Ha Long Bay is the perfect fit and what you can expect:
 
-🌏 You: What about budget options in Hanoi?
+**Ha Long Bay (City)**
+*   **Mountains:** The defining feature of Ha Long Bay is its thousands of towering limestone karsts and islets. These dramatic formations create a majestic, mountainous seascape that is truly unique and offers incredible views.
+*   **Beaches:** The bay is dotted with numerous pristine beaches on its islands, perfect for swimming, sunbathing, and kayaking.  
+*   **Activities:** Cruising through the bay, exploring caves, kayaking around islets, and relaxing on secluded beaches are popular activities.
+*   **Relevant Attractions:**
+    *   **attraction_43:** Described as "A popular attraction in Ha Long Bay known for its cultural and scenic beauty. Perfect for tourists who love beach." This directly addresses your interest in beaches.
+    *   **attraction_47:** Also located in Ha Long Bay, suggesting more points of interest within the area.
 
-⏳ Processing (async retrieval + Gemini)...
+**Practical Logistics:**
+Ha Long Bay is located in northern Vietnam. The most common way to access Ha Long Bay is by traveling from Hanoi (approximately 2-3 hours by car/bus). While the provided graph shows connections from Ho Chi Minh City to Sapa and Mekong Delta, it does not directly show connections to Ha Long Bay. If you are starting your trip from Ho Chi Minh City, you would typically fly to Hanoi first and then arrange transport to Ha Long Bay.
 
-2025-10-19 21:15:46,475 - INFO - Query: What about budget options in Hanoi?
-2025-10-19 21:15:46,847 - INFO - Pinecone: 10 results
-2025-10-19 21:15:47,031 - INFO - Neo4j: 46 relationships
-2025-10-19 21:15:47,031 - INFO - RRF: 38 combined results
-2025-10-19 21:15:47,031 - INFO - AFC is enabled with max remote calls: 10.
-2025-10-19 21:16:07,910 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
-2025-10-19 21:16:07,910 - INFO - Total time: 21.43s
-======================================================================
-🤖 Assistant:
-======================================================================
-Hanoi is an excellent destination for budget travelers, offering a rich cultural experience without a hefty price tag!
-
-For specific budget accommodation, we recommend:
-
-*   **Hanoi Hotel 23** (ID: hotel_23): This hotel is explicitly described as ideal for travelers looking for **budget experiences**. It offers a cozy stay with comfort and local charm, making it a great choice for cost-conscious visitors.
-
-Beyond specific hotels, here are some general tips for enjoying Hanoi (ID: city_hanoi) on a budget:
-
-*   **Accommodation:** In addition to budget-friendly hotels like Hanoi Hotel 23, consider staying in hostels, guesthouses, or homestays, particularly in the Old Quarter. These options often provide great value and a chance to meet other travelers.
-*   **Food:** Embrace Hanoi's legendary street food scene! You can enjoy delicious and authentic Vietnamese dishes like pho, bun cha, and banh mi for just a few dollars. Look for local eateries and markets rather than tourist-focused restaurants.
-*   **Transportation:** The best way to explore the Old Quarter and many central attractions is on foot. For longer distances, utilize Hanoi's extensive and very affordable public bus system. Ride-hailing apps like Grab (for motorbikes or cars) are also a cost-effective way to get around.
-*   **Attractions:** Many of Hanoi's most iconic experiences are free or have very low entry fees. Enjoy a leisurely stroll around Hoan Kiem Lake, wander through the bustling streets of the Old Quarter, or visit some of the numerous temples and pagodas. Hanoi (ID: city_hanoi) is known for its culture, food, and heritage experiences, and many of its attractions (such as Hanoi Attraction 1, Hanoi Attraction 2, etc.) offer authentic insights without breaking the bank.
-*   **Shopping:** When shopping at local markets for souvenirs or clothing, don't be afraid to bargain politely for a better price.
-
-Hanoi (ID: city_hanoi) is renowned for its authentic Vietnamese experiences, and these often come with budget-friendly options, making it an ideal destination for travelers looking to save money while immersing themselves in local culture.
+**Recommendation:**
+Plan your trip to **Ha Long Bay (City)**. You'll be able to experience the breathtaking "mountains" of the limestone karsts and enjoy the beautiful beaches within the same stunning location.
 
 ======================================================================
-⚡ Time: 21.43s | Cache: 25.00%
+ Time: 16.70s | Cache: 0.00%
 ======================================================================
 
-🌏 You: Plan a 3-day romantic beach vacation in Vietnam
+ You: What about budget options in Hanoi?
 
-⏳ Processing (async retrieval + Gemini)...
+ Processing (async retrieval + Gemini)...
 
-2025-10-19 21:16:28,860 - INFO - Query: Plan a 3-day romantic beach vacation in Vietnam
-2025-10-19 21:16:29,233 - INFO - Pinecone: 10 results
-2025-10-19 21:16:29,349 - INFO - Neo4j: 50 relationships
-2025-10-19 21:16:29,349 - INFO - RRF: 52 combined results
-2025-10-19 21:16:29,349 - INFO - AFC is enabled with max remote calls: 10.
-2025-10-19 21:16:56,694 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
-2025-10-19 21:16:56,694 - INFO - Total time: 27.83s
+2025-10-19 22:01:08,358 - INFO - Query: What about budget options in Hanoi?
+2025-10-19 22:01:08,698 - INFO - Pinecone: 10 results
+2025-10-19 22:01:08,833 - INFO - Neo4j: 46 relationships
+2025-10-19 22:01:08,833 - INFO - RRF: 38 combined results
+2025-10-19 22:01:08,833 - INFO - AFC is enabled with max remote calls: 10.
+2025-10-19 22:01:24,621 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2025-10-19 22:01:24,626 - INFO - Total time: 16.27s
 ======================================================================
-🤖 Assistant:
+ Assistant:
 ======================================================================
-For a 3-day romantic beach vacation in Vietnam, the ideal destination needs to combine beautiful beaches with a romantic atmosphere, all while being logistically feasible for a short trip.
+Hanoi offers a fantastic experience for budget-conscious travelers! Here's how you can make the most of your trip without breaking the bank:
+
+**Budget Accommodation:**
+
+For a stay that aligns with your budget, we recommend:
+
+*   **Hanoi Hotel 23** (ID: hotel_23): This hotel is specifically described as ideal for travelers looking for budget experiences while still offering comfort and local charm.
+
+While other hotels like Hanoi Hotel 25, 17, 16, 22, 24, and 18 are located in Hanoi (ID: city_hanoi), their descriptions lean towards boutique or luxury experiences, which might not fit a strict budget.
+
+**General Budget Tips for Hanoi (ID: city_hanoi):**
+
+1.  **Street Food Delights:** Hanoi is a paradise for affordable and delicious street food. You can enjoy iconic dishes like Pho, Bun Cha, Banh Mi, and Egg Coffee for just a few dollars. Eating at local eateries and street stalls is not only budget-friendly but also an authentic cultural experience.
+2.  **Free & Low-Cost Attractions:** Many of Hanoi's most captivating sights are free or have minimal entrance fees:
+    *   **Hoan Kiem Lake:** Enjoy a leisurely stroll around the lake, especially beautiful in the early morning or evening.        
+    *   **Old Quarter:** Wander through the bustling streets, soak in the atmosphere, and discover hidden gems.
+    *   **Temple of Literature:** A small entrance fee provides access to Vietnam's first national university.
+    *   **Ho Chi Minh Mausoleum Complex:** While the mausoleum itself has specific visiting hours and rules, the surrounding grounds, including One Pillar Pagoda, are generally accessible.
+    *   **Long Bien Bridge:** Walk or bike across this historic bridge for great views of the Red River.
+3.  **Transportation:**
+    *   **Walking:** The Old Quarter and areas around Hoan Kiem Lake are best explored on foot.
+    *   **Local Buses:** An incredibly cheap way to get around the city, though it might require some navigation.
+    *   **Grab (Ride-Hailing App):** Use Grab for motorbikes (GrabBike) or cars (GrabCar) for convenient and transparent pricing. It's often cheaper than traditional taxis.
+4.  **Shopping:** Bargain respectfully at markets like Dong Xuan Market for souvenirs, clothing, and local goods.
+
+By choosing budget-friendly accommodation like Hanoi Hotel 23 and embracing the local way of life, you can have an incredible and affordable trip to Hanoi!
+
+======================================================================
+ Time: 16.27s | Cache: 25.00%
+======================================================================
+
+ You: Plan a 3-day romantic beach vacation in Vietnam
+
+ Processing (async retrieval + Gemini)...
+
+2025-10-19 22:01:33,684 - INFO - Query: Plan a 3-day romantic beach vacation in Vietnam
+2025-10-19 22:01:34,083 - INFO - Pinecone: 10 results
+2025-10-19 22:01:34,347 - INFO - Neo4j: 50 relationships
+2025-10-19 22:01:34,347 - INFO - RRF: 52 combined results
+2025-10-19 22:01:34,347 - INFO - AFC is enabled with max remote calls: 10.
+2025-10-19 22:01:57,268 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2025-10-19 22:01:57,268 - INFO - Total time: 23.58s
+======================================================================
+ Assistant:
+======================================================================
+For a 3-day romantic beach vacation in Vietnam, the key is to choose a destination that combines beautiful coastal scenery with a romantic atmosphere, while also being logistically feasible for a short trip.
 
 Based on your query and the provided data, here are the top recommendations:
 
----
+### Analysis of Your Request & Data:
 
-### **Primary Recommendation: Da Nang & Hoi An (Central Vietnam)**
+*   **User Goal:** 3-day romantic beach vacation.
+*   **Key Descriptors:** "Romantic," "Beach," "3 days" (implies minimal travel time between locations).
+*   **Strong Semantic Matches for "Beach" & "Romantic":**
+    *   **Ha Long Bay (city_ha_long):** Explicitly mentions "beach, cruise, nature experiences" and is often considered romantic, especially with overnight cruises.
+    *   **Da Nang (city_da_nang):** Explicitly mentions "beach, modern." While "modern" isn't directly "romantic," its proximity to Hoi An makes it a strong contender.
+    *   **Da Lat (city_da_lat):** Explicitly mentions "romantic, flowers, mountain." While highly romantic, it is *not* a beach destination, so it doesn't fit the "beach" criteria.
+*   **Relevant Activities:** Ha Long Bay Activity 65 (boat rides) is highly relevant for a romantic cruise experience.
+*   **Graph Relationships:** `city_ha_long` has many attractions and a hotel, confirming it's a developed tourist destination. `city_ha_long` is also connected to `Hoi An` (city_hoi_an), which is known for its romantic charm, although geographically distant from Ha Long Bay itself.
 
-This combination offers the perfect blend of stunning beaches and an incredibly romantic, charming ancient town, making it an excellent choice for a 3-day getaway.
+### Recommendations:
 
-*   **Why it's a great fit:**
-    *   **Beach:** **Da Nang (ID: city_da_nang)** is renowned for its long, sandy beaches like My Khe and Non Nuoc, perfect for relaxation, swimming, and romantic strolls.
-    *   **Romantic:** While Da Nang itself is modern, its proximity to **Hoi An (ID: city_hoi_an)** elevates the romantic factor significantly. Hoi An is a UNESCO World Heritage site known for its ancient architecture, lantern-lit streets, and charming riverside atmosphere.
-    *   **Logistics:** Da Nang has an international airport (DAD), making it easily accessible. The drive to Hoi An is only about 30-45 minutes.
-    *   **Duration:** A 3-day trip allows you to enjoy both the beach and Hoi An without feeling rushed.
-
-*   **Suggested 3-Day Itinerary:**
-
-    *   **Day 1: Arrival & Beach Bliss in Da Nang**
-        *   Arrive at Da Nang International Airport (DAD).
-        *   Transfer to a beachfront resort in Da Nang (ID: city_da_nang).
-        *   Spend the afternoon relaxing on the beach, swimming, or enjoying your resort's amenities.
-        *   Enjoy a romantic seafood dinner at a beachfront restaurant.
-    *   **Day 2: Enchanting Hoi An**
-        *   After a leisurely breakfast, take a short transfer to Hoi An (ID: city_hoi_an).
-        *   Spend the day exploring Hoi An's Ancient Town: visit historical houses, the Japanese Covered Bridge, and local craft shops.
-        *   Consider a cooking class together or a bicycle ride through the rice paddies.
-        *   As evening falls, witness Hoi An transform with thousands of colorful lanterns. Enjoy a romantic boat ride on the Thu Bon River, releasing floating lanterns.
-        *   Savor a romantic dinner at one of Hoi An's charming riverside restaurants.
-        *   Return to your Da Nang resort or opt for a romantic stay in Hoi An.
-    *   **Day 3: Morning Relaxation & Departure**
-        *   Enjoy a final morning on Da Nang's beach or indulge in a couples' spa treatment.
-        *   Have a relaxed brunch.
-        *   Transfer back to Da Nang International Airport (DAD) for your departure.
+Considering the "romantic beach" criteria and the 3-day constraint, I recommend two primary options, each offering a distinct romantic beach experience:
 
 ---
 
-### **Alternative Recommendation: Ha Long Bay (Northern Vietnam)**
+### Option 1: Ha Long Bay - The Romantic Cruise Escape
 
-If you're looking for a unique "beach" experience that focuses more on stunning natural landscapes and cruising, Ha Long Bay is an excellent romantic choice.   
+**Why it's perfect:** Ha Long Bay offers a unique "beach" experience through its iconic limestone karsts, emerald waters, and luxurious overnight cruises. It's incredibly scenic and inherently romantic.
 
-*   **Why it's a great fit:**
-    *   **Beach/Nature:** **Ha Long Bay (ID: city_ha_long)** is famous for its emerald waters and thousands of towering limestone islands topped with rainforests. While traditional sandy beaches are fewer, many cruises offer stops at secluded coves with small beaches or opportunities for kayaking and swimming. The experience is more about the majestic bay itself.
-    *   **Romantic:** Overnight cruises on Ha Long Bay are inherently romantic, offering breathtaking sunsets, gourmet meals, and intimate moments amidst unparalleled scenery. The "boat rides" (ID: activity_65) are a core part of this experience.
-    *   **Authentic Experiences:** The area offers a blend of nature and local culture.
+*   **Location:** Northern Vietnam (city_ha_long)
+*   **Romantic Appeal:** Stunning natural beauty, private balconies on cruises, sunset dinners on deck, kayaking in secluded lagoons.
+*   **Beach Aspect:** While not a traditional long sandy beach, you can swim, kayak, and relax on small, pristine beaches accessible by boat.
+*   **Logistics:** Fly into Hanoi (city_hanoi), then a comfortable 2-3 hour transfer to Ha Long Bay.
 
-*   **Suggested 3-Day Itinerary:**
+**Sample 3-Day Itinerary:**
 
-    *   **Day 1: Arrival & Overnight Cruise**
-        *   Arrive at Hanoi's Noi Bai International Airport (ID: city_hanoi).
-        *   Take a pre-arranged transfer (approx. 2.5-3 hours) to Ha Long Bay (ID: city_ha_long).
-        *   Board your luxury overnight cruise.
-        *   Enjoy a welcome drink and lunch as you sail through the iconic karst landscape.
-        *   Participate in activities like kayaking (ID: activity_65) or visiting a floating fishing village.
-        *   Enjoy a romantic dinner on board, watching the sunset over the bay.
-    *   **Day 2: Bay Exploration & Ha Long City**
-        *   Wake up to the serene beauty of the bay. Participate in a Tai Chi session on deck.
-        *   Enjoy breakfast and continue cruising, perhaps visiting a stunning cave.
-        *   Disembark from your cruise around noon.
-        *   Check into a hotel in Ha Long City (e.g., Ha Long Bay Hotel 51).
-        *   Spend the afternoon exploring Ha Long City, perhaps visiting a local market (ID: activity_68) or enjoying a historical walk (ID: activity_67).      
-        *   Enjoy a romantic dinner with bay views.
-    *   **Day 3: Leisure & Departure**
-        *   Enjoy a leisurely morning in Ha Long City.
-        *   You might opt for a final short boat trip or simply relax.
-        *   Transfer back to Hanoi (ID: city_hanoi) for your departure from Noi Bai International Airport.
+*   **Day 1: Arrival & Overnight Cruise Immersion**
+    *   Morning: Arrive at Hanoi's Noi Bai International Airport (city_hanoi). Take a pre-arranged shuttle or private car transfer to Ha Long Bay (approx. 2.5-3 hours).
+    *   Afternoon: Board your chosen luxury overnight cruise (e.g., Ha Long Bay Hotel 51 or similar). Settle into your cabin, enjoy a welcome drink and lunch as the boat begins its journey through the stunning karsts.
+    *   Evening: Enjoy activities like kayaking (activity_65), swimming, or visiting a cave. Indulge in a romantic dinner on board, perhaps followed by squid fishing or simply stargazing from your deck.
+*   **Day 2: Bay Exploration & Relaxation**
+    *   Morning: Wake up to the serene beauty of the bay. Participate in a Tai Chi session on deck. Enjoy breakfast. Continue exploring the bay, perhaps visiting a floating village or another cave.
+    *   Afternoon: Relax on the sundeck, enjoy the views, or take another swim. Some cruises offer cooking classes.
+    *   Evening: Another exquisite dinner on board, perhaps with a special romantic setup or a private dining experience.
+*   **Day 3: Farewell Ha Long & Departure**
+    *   Morning: Enjoy a final breakfast on the cruise. The boat will slowly make its way back to the harbor. Disembark and transfer back to Hanoi (city_hanoi) for your onward flight.
 
 ---
 
-Both options offer distinct romantic experiences. For a more traditional "beach vacation" with a charming cultural twist, Da Nang and Hoi An are highly recommended. For a unique, scenic, and intimate cruise experience amidst natural wonders, Ha Long Bay is an unforgettable choice.
+### Option 2: Da Nang & Hoi An - Classic Beach & Charming Town Romance
+
+**Why it's perfect:** This option combines the beautiful sandy beaches of Da Nang with the enchanting, lantern-lit ancient town of Hoi An, offering a blend of relaxation and cultural romance.
+
+*   **Location:** Central Vietnam (city_da_nang, city_hoi_an)
+*   **Romantic Appeal:** Long sandy beaches, charming ancient town with lanterns, riverside dining, tailor-made clothes, cooking classes.
+*   **Beach Aspect:** Da Nang boasts stunning My Khe Beach, perfect for sunbathing, swimming, and watersports. Hoi An also has nearby beaches like An Bang.
+*   **Logistics:** Fly directly into Da Nang International Airport (city_da_nang). Hoi An (city_hoi_an) is a short 30-45 minute drive away.
+
+**Sample 3-Day Itinerary:**
+
+*   **Day 1: Da Nang Beach Bliss**
+    *   Morning: Arrive at Da Nang International Airport (city_da_nang). Transfer to your beachfront resort in Da Nang.
+    *   Afternoon: Relax on the pristine sands of My Khe Beach. Enjoy swimming, sunbathing, or a romantic stroll along the shore.  
+    *   Evening: Indulge in a fresh seafood dinner at a beachfront restaurant in Da Nang.
+*   **Day 2: Hoi An Ancient Town Romance**
+    *   Morning: Enjoy a leisurely breakfast at your resort. Spend the morning relaxing on the beach or by the pool.
+    *   Afternoon: Take a short transfer (30-45 mins) to Hoi An (city_hoi_an). Check into a charming boutique hotel in or near the ancient town. Explore the UNESCO World Heritage site, visit the Japanese Covered Bridge, and browse the tailor shops.
+    *   Evening: Experience the magical lantern-lit streets of Hoi An. Enjoy a romantic dinner at a riverside restaurant, followed by a traditional lantern boat ride on the Thu Bon River.
+*   **Day 3: Hoi An Charm & Departure**
+    *   Morning: Enjoy a leisurely breakfast in Hoi An. Perhaps take a cooking class together, cycle through the rice paddies, or simply enjoy a coffee by the river.
+    *   Afternoon: Do some last-minute souvenir shopping or get a custom outfit made.
+    *   Late Afternoon: Transfer back to Da Nang International Airport (city_da_nang) for your departure.
+
+---
+
+### Other Considerations:
+
+*   **Da Lat (city_da_lat):** While highly rated for "romantic" and "flowers," Da Lat is a mountain city in Southern Vietnam and does not offer a beach experience. It's a fantastic romantic destination, but not for a *beach* vacation.
+*   **Hanoi (city_hanoi):** A vibrant capital known for culture and food, but not a beach destination. It serves as a gateway for Ha Long Bay.
+
+For a 3-day romantic beach vacation, both Ha Long Bay and the Da Nang/Hoi An combination offer incredible experiences. Choose Ha Long Bay for a unique, scenic cruise adventure, or Da Nang/Hoi An for a blend of classic sandy beaches and charming cultural romance.
 
 ======================================================================
-⚡ Time: 27.83s | Cache: 40.00%
+ Time: 23.58s | Cache: 40.00%
 ======================================================================
+
+ You: stats
+
+ Cache Statistics:
+   Hits: 2
+   Misses: 3
+   Hit Rate: 40.00%
+   Cache Size: 3
+
+ You: View cache statistics
+
+ Processing (async retrieval + Gemini)...
+
+2025-10-19 22:02:21,947 - INFO - Query: View cache statistics
+Batches: 100%|██████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<?, ?it/s] 
+2025-10-19 22:02:22,337 - INFO - Pinecone: 10 results
+2025-10-19 22:02:22,473 - INFO - Neo4j: 10 relationships
+2025-10-19 22:02:22,473 - INFO - RRF: 14 combined results
+2025-10-19 22:02:22,473 - INFO - AFC is enabled with max remote calls: 10.
+2025-10-19 22:02:30,121 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2025-10-19 22:02:30,121 - INFO - Total time: 8.17s
+======================================================================
+ Assistant:
+======================================================================
+It appears your query, "View cache statistics," is a technical request related to system performance or data management.
+
+As an expert travel assistant for Vietnam, my purpose is to provide information and recommendations for travel planning, destinations, accommodations, and experiences within Vietnam. I am not equipped to access or display internal system cache statistics.       
+
+Please let me know if you have any questions about:
+*   Hotels in Da Lat, Ho Chi Minh City, Mekong Delta, or Sapa (e.g., `hotel_261`, `hotel_304`, `hotel_339`, `hotel_94`)
+*   Information about cities like Da Lat (`city_da_lat`), Ho Chi Minh City (`city_ho_chi_minh`), Mekong Delta (`city_mekong`), or Sapa (`city_sapa`)
+*   Any other travel-related inquiries for Vietnam!
+
+======================================================================
+ Time: 8.17s | Cache: 33.33%
+======================================================================
+
+ You: Quit
+
+ Goodbye! Safe travels!
+Final cache stats: {'hits': 2, 'misses': 4, 'hit_rate': '33.33%', 'size': 4}
+
+2025-10-19 22:02:58,691 - INFO - Connections closed
 ```
 
 ### 4. Visualize Graph
 
 ```bash
-python visualize_graph_improved.py
+python visualize_graph.py
 ```
 
 Opens `neo4j_viz.html` in browser with interactive graph.
@@ -584,24 +665,18 @@ Opens `neo4j_viz.html` in browser with interactive graph.
 blue-enigma-challenge/
 │
 ├── config.py                      # API credentials
-├── config_improved.py             # Enhanced config
 │
 ├── vietnam_travel_dataset.json   # Knowledge base (360 nodes)
 │
-├── load_to_neo4j.py              # Original loader
-├── load_to_neo4j_improved.py     # Enhanced with UNWIND
+├── load_to_neo4j.py              
 │
-├── pinecone_upload.py            # Original uploader
-├── pinecone_upload_improved.py   # FREE Sentence-Transformers
+├── pinecone_upload.py            
 │
-├── hybrid_chat.py                # Original chat (OpenAI)
-├── hybrid_chat_improved.py       # FREE Gemini + Async + Cache
+├── hybrid_chat.py                
 │
-├── visualize_graph.py            # Original viz
-├── visualize_graph_improved.py   # Fixed pyvis compatibility
+├── visualize_graph.py            
 │
 ├── requirements.txt              # Original deps
-├── requirements_improved.txt     # Updated deps
 │
 ├── README.md                     # This file
 ├── IMPROVEMENTS.md               # Detailed enhancements doc
@@ -797,7 +872,7 @@ test_queries = [
 ### Running Tests
 ```bash
 # Manual testing
-python hybrid_chat_improved.py
+python hybrid_chat.py
 
 # Automated validation (future)
 pytest tests/test_hybrid_chat.py
@@ -825,7 +900,7 @@ pyvis==0.3.2
 
 ### Full Install
 ```bash
-pip install -r requirements_improved.txt
+pip install -r requirements.txt
 ```
 
 ---

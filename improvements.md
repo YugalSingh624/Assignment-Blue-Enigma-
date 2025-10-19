@@ -63,12 +63,12 @@ pc = Pinecone(api_key=config_improved.PINECONE_API_KEY)
 # Proper index creation with consistent cloud provider
 if INDEX_NAME not in pc.list_indexes().names():
     logger.error(f"Index '{INDEX_NAME}' not found!")
-    print(f"\n⚠️ Please run 'python pinecone_upload_improved.py' first!\n")
+    print(f"\n Please run 'python pinecone_upload_improved.py' first!\n")
     exit(1)
 
 # gRPC connection for better performance
 index = pc.Index(INDEX_NAME)
-logger.info("✅ Pinecone connected")
+logger.info(" Pinecone connected")
 ```
 
 **Impact:**
@@ -149,29 +149,29 @@ async def hybrid_retrieve(query: str):
 
 async def interactive_chat():
     print("="*70)
-    print("💬 CHAT READY - Ask me anything about Vietnam travel!")
+    print(" CHAT READY - Ask me anything about Vietnam travel!")
     print("="*70)
     
     while True:
         try:
-            query = input("🌏 You: ").strip()
+            query = input(" You: ").strip()
             if not query:
                 continue
             
             if query.lower() in ("exit", "quit", "q"):
-                print("\n👋 Goodbye! Safe travels!")
+                print("\n Goodbye! Safe travels!")
                 break
             
-            print("\n⏳ Processing (async retrieval + Gemini)...\n")
+            print("\n Processing (async retrieval + Gemini)...\n")
             
             # ✅ Async execution
             result = await hybrid_retrieve(query)
             
             print("="*70)
-            print("🤖 Assistant:")
+            print(" Assistant:")
             print("="*70)
             print(result["answer"])
-            print(f"\n⚡ Time: {result['elapsed']:.2f}s")
+            print(f"\n Time: {result['elapsed']:.2f}s")
             print("="*70 + "\n")
             
         except KeyboardInterrupt:
@@ -475,13 +475,13 @@ from google import genai
 from google.genai import types
 
 # ✅ FREE local embedding model
-print("📦 Loading FREE embedding model...")
+print(" Loading FREE embedding model...")
 embedding_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-logger.info("✅ Embedding model ready (local)")
+logger.info(" Embedding model ready (local)")
 
 # ✅ FREE Gemini API (1,500 requests/day free tier)
 client = genai.Client(api_key=config_improved.GEMINI_API_KEY)
-logger.info("✅ Gemini API configured")
+logger.info(" Gemini API configured")
 
 def embed_text(text: str) -> List[float]:
     """
@@ -733,7 +733,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 print("="*70)
-print("🌏 HYBRID TRAVEL ASSISTANT - Google Gemini Edition")
+print(" HYBRID TRAVEL ASSISTANT - Google Gemini Edition")
 print("Using: Gemini API + Hugging Face Embeddings + Neo4j + Pinecone")
 print("="*70 + "\n")
 
@@ -902,7 +902,7 @@ def embed_text(text: str) -> List[float]:
 
 # User can check cache stats with 'stats' command:
 # >>> stats
-# 📊 Cache Statistics:
+#  Cache Statistics:
 #  Hits: 45
 #  Misses: 12
 #  Hit Rate: 78.95%
@@ -1169,7 +1169,7 @@ async def hybrid_retrieve(query: str):
 
 async def interactive_chat():
     print("="*70)
-    print("💬 CHAT READY - Ask me anything about Vietnam travel!")
+    print(" CHAT READY - Ask me anything about Vietnam travel!")
     print("="*70)
     print("Commands:")
     print(" • Type your question to get recommendations")
@@ -1179,13 +1179,13 @@ async def interactive_chat():
     
     while True:
         try:
-            query = input("🌏 You: ").strip()
+            query = input(" You: ").strip()
             
             if not query:
                 continue
             
             if query.lower() in ("exit", "quit", "q"):
-                print("\n👋 Goodbye! Safe travels!")
+                print("\n Goodbye! Safe travels!")
                 # ✅ Show final cache stats
                 print(f"Final cache stats: {embedding_cache.stats()}\n")
                 break
@@ -1193,28 +1193,28 @@ async def interactive_chat():
             # ✅ NEW: Cache statistics command
             if query.lower() == "stats":
                 stats = embedding_cache.stats()
-                print(f"\n📊 Cache Statistics:")
+                print(f"\n Cache Statistics:")
                 print(f" Hits: {stats['hits']}")
                 print(f" Misses: {stats['misses']}")
                 print(f" Hit Rate: {stats['hit_rate']}")
                 print(f" Cache Size: {stats['size']}\n")
                 continue
             
-            print("\n⏳ Processing (async retrieval + Gemini)...\n")
+            print("\n Processing (async retrieval + Gemini)...\n")
             
             result = await hybrid_retrieve(query)
             
             print("="*70)
-            print("🤖 Assistant:")
+            print(" Assistant:")
             print("="*70)
             print(result["answer"])
             print("\n" + "="*70)
             # ✅ Display performance metrics
-            print(f"⚡ Time: {result['elapsed']:.2f}s | Cache: {embedding_cache.stats()['hit_rate']}")
+            print(f" Time: {result['elapsed']:.2f}s | Cache: {embedding_cache.stats()['hit_rate']}")
             print("="*70 + "\n")
             
         except KeyboardInterrupt:
-            print("\n\n👋 Interrupted. Goodbye!")
+            print("\n\n Interrupted. Goodbye!")
             break
         except Exception as e:
             logger.error(f"Error: {e}")
@@ -1222,7 +1222,7 @@ async def interactive_chat():
             continue
 
 # Example output:
-# ⚡ Time: 1.52s | Cache: 55.67%
+#  Time: 1.52s | Cache: 55.67%
 # User sees real-time performance!
 ```
 

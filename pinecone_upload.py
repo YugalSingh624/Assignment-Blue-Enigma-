@@ -25,12 +25,12 @@ VECTOR_DIM = 384  # sentence-transformers dimension
 # -----------------------------
 # Load FREE embedding model
 # -----------------------------
-print("\n📦 Loading FREE embedding model...")
+print("\n Loading FREE embedding model...")
 print("   Model: sentence-transformers/all-MiniLM-L6-v2")
 print("   First run will download ~150MB, then cached locally\n")
 
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-print("✅ Model loaded! Running locally (no API calls needed)\n")
+print(" Model loaded! Running locally (no API calls needed)\n")
 
 # -----------------------------
 # Initialize Pinecone
@@ -43,7 +43,7 @@ pc = Pinecone(
 # Create or connect to index
 existing_indexes = pc.list_indexes().names()
 if INDEX_NAME not in existing_indexes:
-    print(f"📌 Creating Pinecone index: {INDEX_NAME}")
+    print(f" Creating Pinecone index: {INDEX_NAME}")
     print(f"   Dimension: {VECTOR_DIM}")
     print(f"   Metric: cosine")
     print(f"   Region: us-east1-gcp (FREE tier)\n")
@@ -57,22 +57,22 @@ if INDEX_NAME not in existing_indexes:
             region="us-east-1"
         )
     )
-    print("⏳ Waiting for index to be ready...")
+    print(" Waiting for index to be ready...")
     time.sleep(15)
-    print("✅ Index ready!\n")
+    print(" Index ready!\n")
 else:
-    print(f"✅ Index '{INDEX_NAME}' already exists\n")
+    print(f" Index '{INDEX_NAME}' already exists\n")
 
 index = pc.Index(INDEX_NAME)
 
 # -----------------------------
 # Load data
 # -----------------------------
-print(f"📂 Loading data from {DATA_FILE}...")
+print(f" Loading data from {DATA_FILE}...")
 with open(DATA_FILE, 'r', encoding='utf-8') as f:
     data = json.load(f)
 
-print(f"✅ Loaded {len(data)} nodes\n")
+print(f" Loaded {len(data)} nodes\n")
 
 # -----------------------------
 # Generate embeddings and upload
@@ -80,7 +80,7 @@ print(f"✅ Loaded {len(data)} nodes\n")
 vectors_to_upsert = []
 successful_uploads = 0
 
-print("🔄 Generating embeddings and uploading to Pinecone...")
+print(" Generating embeddings and uploading to Pinecone...")
 print("   This runs locally - no API calls!\n")
 
 for item in tqdm(data, desc="Processing nodes"):
@@ -91,7 +91,7 @@ for item in tqdm(data, desc="Processing nodes"):
         text_to_embed = item.get("semantic_text", "") or item.get("description", "")
         
         if not text_to_embed:
-            print(f"   ⚠️  Skipping {node_id} - no text found")
+            print(f"  Skipping {node_id} - no text found")
             continue
         
         # Generate embedding locally (FREE!)
@@ -128,11 +128,11 @@ for item in tqdm(data, desc="Processing nodes"):
                 successful_uploads += len(vectors_to_upsert)
                 vectors_to_upsert = []
             except Exception as e:
-                print(f"\n   ❌ Batch upload error: {e}")
+                print(f"\n    Batch upload error: {e}")
                 vectors_to_upsert = []
     
     except Exception as e:
-        print(f"\n   ❌ Error processing {node_id}: {e}")
+        print(f"\n   Error processing {node_id}: {e}")
         continue
 
 # Upload remaining vectors
@@ -141,25 +141,25 @@ if vectors_to_upsert:
         index.upsert(vectors=vectors_to_upsert)
         successful_uploads += len(vectors_to_upsert)
     except Exception as e:
-        print(f"\n   ❌ Final batch upload error: {e}")
+        print(f"\n    Final batch upload error: {e}")
 
 print("\n" + "="*70)
-print("✅ UPLOAD COMPLETE!")
+print(" UPLOAD COMPLETE!")
 print("="*70)
-print(f"📊 Statistics:")
+print(f" Statistics:")
 print(f"   Total nodes processed: {len(data)}")
 print(f"   Successfully uploaded: {successful_uploads}")
 print(f"   Vector dimension: {VECTOR_DIM}")
-print(f"   💰 Total cost: $0.00 (100% FREE!)")
+print(f"   Total cost: $0.00 (100% FREE!)")
 print("="*70)
 
 # Verify upload
 try:
     stats = index.describe_index_stats()
-    print(f"\n✅ Verification:")
+    print(f"\n Verification:")
     print(f"   Vectors in index: {stats['total_vector_count']}")
-    print(f"   Index ready: ✅")
+    print(f"   Index ready: ")
 except Exception as e:
-    print(f"\n⚠️  Could not verify: {e}")
+    print(f"\n  Could not verify: {e}")
 
-print("\n🎉 All done! Ready to run hybrid_chat_GEMINI.py")
+print("\n All done! Ready to run hybrid_chat_GEMINI.py")

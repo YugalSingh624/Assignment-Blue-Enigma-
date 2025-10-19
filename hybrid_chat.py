@@ -1,9 +1,3 @@
-# hybrid_chat_GEMINI.py
-# Complete hybrid AI system using Google Gemini + FREE embeddings
-# Author: Yugal | Blue Enigma Labs Challenge
-# 100% FREE solution!
-
-import json
 import asyncio
 import hashlib
 import logging
@@ -22,9 +16,9 @@ from google import genai
 from google.genai import types
 
 
-# -----------------------------
+
 # Setup Logging
-# -----------------------------
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
@@ -32,43 +26,43 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 print("="*70)
-print("🌏 HYBRID TRAVEL ASSISTANT - Google Gemini Edition")
+print(" HYBRID TRAVEL ASSISTANT - Google Gemini Edition")
 print("Using: Gemini API + Hugging Face Embeddings + Neo4j + Pinecone")
 print("="*70 + "\n")
 
-# -----------------------------
+
 # Config
-# -----------------------------
+
 INDEX_NAME = config.PINECONE_INDEX_NAME
 TOP_K = 10
 RRF_K = 60
 
-# -----------------------------
+
 # Initialize FREE models
-# -----------------------------
-print("📦 Initializing components...\n")
+
+print(" Initializing components...\n")
 
 # 1. Embedding model (FREE, local)
 print("   1/4 Loading embedding model...")
 embedding_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-logger.info("   ✅ Embedding model ready (local)")
+logger.info("    Embedding model ready (local)")
 
 # 2. Google Gemini (FREE API)
 print("   2/4 Configuring Google Gemini...")
 # genai.configure(api_key=config.GEMINI_API_KEY)
 client = genai.Client(api_key=config.GEMINI_API_KEY)
-logger.info("   ✅ Gemini API configured")
+logger.info("    Gemini API configured")
 
 # 3. Pinecone (FREE tier)
 print("   3/4 Connecting to Pinecone...")
 pc = Pinecone(api_key=config.PINECONE_API_KEY)
 
 if INDEX_NAME not in pc.list_indexes().names():
-    logger.error(f"   ❌ Index '{INDEX_NAME}' not found!")
-    print(f"\n⚠️  Please run 'python pinecone_upload_GEMINI.py' first!\n")
+    logger.error(f"    Index '{INDEX_NAME}' not found!")
+    print(f"\n  Please run 'python pinecone_upload_GEMINI.py' first!\n")
     exit(1)
 index = pc.Index(INDEX_NAME)
-logger.info("   ✅ Pinecone connected")
+logger.info("    Pinecone connected")
 
 # 4. Neo4j (FREE Aura)
 print("   4/4 Connecting to Neo4j...")
@@ -80,17 +74,17 @@ try:
     # Test connection
     with driver.session() as session:
         session.run("RETURN 1")
-    logger.info("   ✅ Neo4j connected")
+    logger.info("    Neo4j connected")
 except Exception as e:
-    logger.error(f"   ❌ Neo4j connection failed: {e}")
-    print(f"\n⚠️  Please check Neo4j credentials in config.py\n")
+    logger.error(f"    Neo4j connection failed: {e}")
+    print(f"\n  Please check Neo4j credentials in config.py\n")
     exit(1)
 
-print("\n✅ All systems ready!\n")
+print("\n All systems ready!\n")
 
-# -----------------------------
+
 # INNOVATION: Embedding Cache
-# -----------------------------
+
 class EmbeddingCache:
     """In-memory cache to reduce embedding computation."""
     
@@ -132,9 +126,9 @@ class EmbeddingCache:
 
 embedding_cache = EmbeddingCache()
 
-# -----------------------------
+
 # Helper functions
-# -----------------------------
+
 def embed_text(text: str) -> List[float]:
     """Generate embedding with caching."""
     cached = embedding_cache.get(text)
@@ -211,9 +205,9 @@ async def async_fetch_graph_context(node_ids: List[str]):
         logger.error(f"Neo4j error: {e}")
         return []
 
-# -----------------------------
+
 # INNOVATION: Reciprocal Rank Fusion
-# -----------------------------
+
 def reciprocal_rank_fusion(
     vector_results: List[Dict],
     graph_facts: List[Dict],
@@ -241,9 +235,9 @@ def reciprocal_rank_fusion(
     logger.info(f"RRF: {len(ranked)} combined results")
     return ranked
 
-# -----------------------------
+
 # INNOVATION: Enhanced Prompts with Gemini
-# -----------------------------
+
 def build_gemini_prompt(user_query, matches, graph_facts, fused_results):
     """Build enhanced prompt for Gemini."""
     
@@ -322,9 +316,9 @@ async def call_gemini_async(prompt: str):
 
 
 
-# -----------------------------
+
 # INNOVATION: Async Parallel Retrieval
-# -----------------------------
+
 async def hybrid_retrieve(query: str):
     """
     Complete hybrid retrieval with:
@@ -369,12 +363,12 @@ async def hybrid_retrieve(query: str):
         "elapsed": elapsed
     }
 
-# -----------------------------
+
 # Interactive Chat
-# -----------------------------
+
 async def interactive_chat():
     print("="*70)
-    print("💬 CHAT READY - Ask me anything about Vietnam travel!")
+    print(" CHAT READY - Ask me anything about Vietnam travel!")
     print("="*70)
     print("Commands:")
     print("  • Type your question to get recommendations")
@@ -384,48 +378,48 @@ async def interactive_chat():
     
     while True:
         try:
-            query = input("🌏 You: ").strip()
+            query = input(" You: ").strip()
             
             if not query:
                 continue
             
             if query.lower() in ("exit", "quit", "q"):
-                print("\n👋 Goodbye! Safe travels!")
+                print("\n Goodbye! Safe travels!")
                 print(f"Final cache stats: {embedding_cache.stats()}\n")
                 break
             
             if query.lower() == "stats":
                 stats = embedding_cache.stats()
-                print(f"\n📊 Cache Statistics:")
+                print(f"\n Cache Statistics:")
                 print(f"   Hits: {stats['hits']}")
                 print(f"   Misses: {stats['misses']}")
                 print(f"   Hit Rate: {stats['hit_rate']}")
                 print(f"   Cache Size: {stats['size']}\n")
                 continue
             
-            print("\n⏳ Processing (async retrieval + Gemini)...\n")
+            print("\n Processing (async retrieval + Gemini)...\n")
             
             result = await hybrid_retrieve(query)
             
             print("="*70)
-            print("🤖 Assistant:")
+            print(" Assistant:")
             print("="*70)
             print(result["answer"])
             print("\n" + "="*70)
-            print(f"⚡ Time: {result['elapsed']:.2f}s | Cache: {embedding_cache.stats()['hit_rate']}")
+            print(f" Time: {result['elapsed']:.2f}s | Cache: {embedding_cache.stats()['hit_rate']}")
             print("="*70 + "\n")
         
         except KeyboardInterrupt:
-            print("\n\n👋 Interrupted. Goodbye!")
+            print("\n\n Interrupted. Goodbye!")
             break
         except Exception as e:
             logger.error(f"Error: {e}")
-            print(f"\n❌ An error occurred: {e}\n")
+            print(f"\n An error occurred: {e}\n")
             continue
 
-# -----------------------------
+
 # Main
-# -----------------------------
+
 if __name__ == "__main__":
     try:
         asyncio.run(interactive_chat())
