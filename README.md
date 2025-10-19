@@ -1,26 +1,6 @@
 # 🌏 Hybrid Knowledge AI System for Vietnam Travel
 ## Blue Enigma Labs AI Engineer Challenge Submission
 
-**Author:** Yugal Singh  
-**Challenge Date:** October 15-20, 2025  
-**Submission Link:** [Your Loom Video] | [GitHub Repository]
-
----
-
-## 📋 Table of Contents
-
-1. [Overview](#overview)
-2. [Quick Start](#quick-start)
-3. [Architecture](#architecture)
-4. [Features](#features)
-5. [Installation](#installation)
-6. [Usage](#usage)
-7. [Project Structure](#project-structure)
-8. [Technical Design](#technical-design)
-9. [Performance](#performance)
-10. [Future Enhancements](#future-enhancements)
-
----
 
 ## 🎯 Overview
 
